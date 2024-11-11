@@ -105,19 +105,19 @@ done
 CUSTOM_NFD_URL="https://github.com/TheBigRedOne/NFD"
 CUSTOM_CXX_URL="https://github.com/TheBigRedOne/ndn-cxx"
 
-# 下载并编译自定义 NFD
-echo "Cloning custom NFD from $CUSTOM_NFD_URL"
-git clone "$CUSTOM_NFD_URL" "$CODEROOT/NFD"
-cd "$CODEROOT/NFD"
+# 下载并编译自定义 ndn-cxx
+echo "Cloning custom ndn-cxx from $CUSTOM_CXX_URL"
+git clone "$CUSTOM_CXX_URL" "$CODEROOT/ndn-cxx"
+cd "$CODEROOT/ndn-cxx"
 ./waf configure
 ./waf -j"$NJOBS"
 $SUDO ./waf install
 cd -
 
-# 下载并编译自定义 ndn-cxx
-echo "Cloning custom ndn-cxx from $CUSTOM_CXX_URL"
-git clone "$CUSTOM_CXX_URL" "$CODEROOT/ndn-cxx"
-cd "$CODEROOT/ndn-cxx"
+# 下载并编译自定义 NFD
+echo "Cloning custom NFD from $CUSTOM_NFD_URL"
+git clone "$CUSTOM_NFD_URL" "$CODEROOT/NFD"
+cd "$CODEROOT/NFD"
 ./waf configure
 ./waf -j"$NJOBS"
 $SUDO ./waf install
