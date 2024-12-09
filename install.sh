@@ -109,6 +109,11 @@ CUSTOM_CXX_URL="https://github.com/TheBigRedOne/ndn-cxx"
 echo "Cloning custom ndn-cxx from $CUSTOM_CXX_URL"
 git clone "$CUSTOM_CXX_URL" "$CODEROOT/ndn-cxx"
 cd "$CODEROOT/ndn-cxx"
+
+# 初始化并更新子模块
+git submodule update --init --recursive
+
+# 编译 ndn-cxx
 ./waf configure
 ./waf -j"$NJOBS"
 $SUDO ./waf install
@@ -118,6 +123,11 @@ cd -
 echo "Cloning custom NFD from $CUSTOM_NFD_URL"
 git clone "$CUSTOM_NFD_URL" "$CODEROOT/NFD"
 cd "$CODEROOT/NFD"
+
+# 初始化并更新子模块
+git submodule update --init --recursive
+
+# 编译 NFD
 ./waf configure
 ./waf -j"$NJOBS"
 $SUDO ./waf install
