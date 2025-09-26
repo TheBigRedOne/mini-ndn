@@ -36,6 +36,7 @@ from minindn.minindn import Minindn
 class Nfd(Application):
     def __init__(self, node: Node, logLevel: str = 'NONE', csSize: int = 65536,
                  csPolicy: str = 'lru', csUnsolicitedPolicy: str = 'drop-all',
+                 useTCP4Transport=False,
                  infoeditChanges: Optional[List[Union[Tuple[str, str], Tuple[str, str, str]]]] = None):
         """
         Set up NFD application through wrapper on node. These arguments are directly from nfd.conf,
@@ -46,6 +47,7 @@ class Nfd(Application):
         :param csSize: ContentStore size in packets (default 65536)
         :param csPolicy: ContentStore replacement policy (default "lru")
         :param csUnsolicitedPolicy: Policy for handling unsolicited data (default "drop-all")
+        :param useTCP4Transport: Use TCP4 transport for NDN client applications instead of Unix socket (default False)
         :param infoeditChanges: Commands passed to infoedit other than the most commonly used arguments.
                These either expect (key, value) (using the `section` command) or otherwise
                (key, value, put|section|delete).
@@ -80,7 +82,10 @@ class Nfd(Application):
         os.makedirs(self.ndnFolder, exist_ok=True)
         # This will overwrite any existing client.conf files, which should not be an issue
         with open(self.clientConf, "w") as client_conf_file:
-            client_conf_file.write("transport=unix://{}\n".format(self.sockFile))
+            if useTCP4Transport:
+                client_conf_file.write("transport=tcp4://127.0.0.1:6363\n")
+            else:
+                client_conf_file.write("transport=unix://{}\n".format(self.sockFile))
 
         # Set CS parameters
         conf_file["tables"]["cs_max_packets"] = csSize
@@ -98,6 +103,7 @@ class Nfd(Application):
         os.remove("{}/temp_nfd_conf.json".format(self.homeDir))
 
         self.infocmd = 'infoedit -f nfd.conf'
+        debug(self.node.cmd(f'{self.infocmd} -p {quote("face_system.tcp.local.whitelist.subnet")} -v {quote("127.0.0.0/8")}\n'))
         # Apply custom infoedit changes
         # EXPECTED FORMAT: [<section>, <key>] OR [<section>, <key>, <operation>]
         # Default behavior will replace all values for section with key
